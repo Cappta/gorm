@@ -3,7 +3,7 @@ package gorm_test
 import (
 	"testing"
 
-	"github.com/jinzhu/gorm"
+	"github.com/Cappta/gorm"
 )
 
 func TestDefaultNameHandlerGenerateFriendlyName(t *testing.T) {

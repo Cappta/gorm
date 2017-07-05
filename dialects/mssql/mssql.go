@@ -7,8 +7,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/Cappta/gorm"
 	_ "github.com/denisenkom/go-mssqldb"
-	"github.com/jinzhu/gorm"
 )
 
 func setIdentityInsert(scope *gorm.Scope) {
