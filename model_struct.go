@@ -12,11 +12,6 @@ import (
 	"github.com/jinzhu/inflection"
 )
 
-// DefaultTableNameHandler default table name handler
-var DefaultTableNameHandler = func(db *DB, defaultTableName string) string {
-	return defaultTableName
-}
-
 type safeModelStructsMap struct {
 	m map[reflect.Type]*ModelStruct
 	l *sync.RWMutex
@@ -55,7 +50,7 @@ func (s *ModelStruct) TableName(db *DB) string {
 		if tabler, ok := reflect.New(s.ModelType).Interface().(tabler); ok {
 			s.defaultTableName = tabler.TableName()
 		} else {
-			tableName := ToDBName(s.ModelType.Name())
+			tableName := DefaultNameHandler(s.ModelType.Name())
 			if db == nil || !db.parent.singularTable {
 				tableName = inflection.Plural(tableName)
 			}
@@ -122,7 +117,7 @@ type Relationship struct {
 
 func getForeignField(column string, fields []*StructField) *StructField {
 	for _, field := range fields {
-		if field.Name == column || field.DBName == column || field.DBName == ToDBName(column) {
+		if field.Name == column || field.DBName == column || field.DBName == DefaultNameHandler(column) {
 			return field
 		}
 	}
@@ -270,7 +265,7 @@ func (scope *Scope) GetModelStruct() *ModelStruct {
 											// source foreign keys (db names)
 											relationship.ForeignFieldNames = append(relationship.ForeignFieldNames, foreignField.DBName)
 											// join table foreign keys for source
-											joinTableDBName := ToDBName(reflectType.Name()) + "_" + foreignField.DBName
+											joinTableDBName := DefaultNameHandler(reflectType.Name()) + "_" + foreignField.DBName
 											relationship.ForeignDBNames = append(relationship.ForeignDBNames, joinTableDBName)
 										}
 									}
@@ -287,7 +282,7 @@ func (scope *Scope) GetModelStruct() *ModelStruct {
 											// association foreign keys (db names)
 											relationship.AssociationForeignFieldNames = append(relationship.AssociationForeignFieldNames, field.DBName)
 											// join table foreign keys for association
-											joinTableDBName := ToDBName(elemType.Name()) + "_" + field.DBName
+											joinTableDBName := DefaultNameHandler(elemType.Name()) + "_" + field.DBName
 											relationship.AssociationForeignDBNames = append(relationship.AssociationForeignDBNames, joinTableDBName)
 										}
 									}
@@ -549,7 +544,7 @@ func (scope *Scope) GetModelStruct() *ModelStruct {
 			if value, ok := field.TagSettings["COLUMN"]; ok {
 				field.DBName = value
 			} else {
-				field.DBName = ToDBName(fieldStruct.Name)
+				field.DBName = DefaultNameHandler(fieldStruct.Name)
 			}
 
 			modelStruct.StructFields = append(modelStruct.StructFields, field)

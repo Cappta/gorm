@@ -6,7 +6,7 @@ import (
 	"github.com/jinzhu/gorm"
 )
 
-func TestToDBNameGenerateFriendlyName(t *testing.T) {
+func TestDefaultNameHandlerGenerateFriendlyName(t *testing.T) {
 	var maps = map[string]string{
 		"":                          "",
 		"X":                         "x",
@@ -25,8 +25,8 @@ func TestToDBNameGenerateFriendlyName(t *testing.T) {
 	}
 
 	for key, value := range maps {
-		if gorm.ToDBName(key) != value {
-			t.Errorf("%v ToDBName should equal %v, but got %v", key, value, gorm.ToDBName(key))
+		if gorm.DefaultNameHandler(key) != value {
+			t.Errorf("%v DefaultNameHandler should equal %v, but got %v", key, value, gorm.DefaultNameHandler(key))
 		}
 	}
 }
